@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Táborová hra</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: "Luckiest Guy", cursive;
+    background-image: url('final photo.png');
+    text-align: center;
+}
+
+h1 {
+    color: #2d3436;
+}
+
+#game {
+    margin-top: 20px;
+}
+
+.words, .targets {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.word {
+    padding: 10px 15px;
+    background: #6ab04c;
+    color: white;
+    border-radius: 10px;
+    cursor: grab;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.target {
+    width: 220px;
+    border: 3px dashed #2d3436;
+    border-radius: 10px;
+    background: #fff;
+    padding: 8px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    background: #f0932b;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #e17055;
+}
+
+.label {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.slot {
+    height: 40px;
+    border: 2px dashed #555;
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="title">🏕️ Tábor – Stanoviště 1</h1>
+<p id="task">Pomoz vedoucímu splnit úkol</p>
+
+<div id="game"></div>
+
+<button onclick="check()">Zkontrolovat úkol</button>
+
+<script>
+let level = 0;
+let dragged = null;
+const soundCorrect = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+const soundWrong   = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+
+const levels = [
+{
+    title: "🏕️ Stanoviště 1 – Co patří do batohu?",
+    words: [
+        {id:"spacak", text:"Spacák"},
+        {id:"kartacek", text:"Kartáček"},
+        {id:"laptop", text:"Notebook"}
+    ],
+    targets: [
+        {text:"Na spaní", answer:"spacak"},
+        {text:"Hygiena", answer:"kartacek"},
+        {text:"Do tábora nepatří", answer:"laptop"}
+    ]
+},
+{
+    title: "🔥 Stanoviště 2 – U ohně",
+    words: [
+        {id:"kytara", text:"Kytara"},
+        {id:"sirky", text:"Sirky"},
+        {id:"plysak", text:"Plyšák"}
+    ],
+    targets: [
+        {text:"Hudba u ohně", answer:"kytara"},
+        {text:"Rozdělávání ohně", answer:"sirky"},
+        {text:"Na spaní do stanu", answer:"plysak"}
+    ]
+},
+{
+    title: "🗺️ Stanoviště 3 – Orientace v lese",
+    words: [
+        {id:"mapa", text:"Mapa"},
+        {id:"kompas", text:"Kompas"},
+        {id:"ovladac", text:"Ovladač od TV"}
+    ],
+    targets: [
+        {text:"Ukazuje cestu", answer:"mapa"},
+        {text:"Ukazuje sever", answer:"kompas"},
+        {text:"Do lesa nepatří", answer:"ovladac"}
+    ]
+}
+];
+
+function loadLevel() {
+    const game = document.getElementById("game");
+    game.innerHTML = "";
+
+    document.getElementById("title").innerText = levels[level].title;
+
+    const wordsDiv = document.createElement("div");
+    wordsDiv.className = "words";
+
+	wordsDiv.ondragover = e => e.preventDefault();
+	wordsDiv.ondrop = () => {
+    	if (dragged) {
+       	 wordsDiv.appendChild(dragged);
+    }
+};
+
+    const targetsDiv = document.createElement("div");
+    targetsDiv.className = "targets";
+
+    levels[level].words.forEach(w => {
+        const el = document.createElement("div");
+        el.className = "word";
+        el.id = w.id;
+        el.innerText = w.text;
+        el.draggable = true;
+        el.ondragstart = () => dragged = el;
+	el.draggable = true;
+        wordsDiv.appendChild(el);
+    });
+
+    levels[level].targets.forEach(t => {
+    const el = document.createElement("div");
+    el.className = "target";
+    el.dataset.answer = t.answer;
+
+    const label = document.createElement("div");
+    label.className = "label";
+    label.innerText = t.text;
+
+    const slot = document.createElement("div");
+    slot.className = "slot";
+
+    slot.ondragover = e => e.preventDefault();
+    slot.ondrop = () => {
+    if (dragged) {
+        const existing = slot.querySelector(".word");
+        if (existing) {
+            wordsDiv.appendChild(existing);
+        }
+        slot.appendChild(dragged);
+    }
+};
+
+    el.appendChild(label);
+    el.appendChild(slot);
+    targetsDiv.appendChild(el);
+});
+
+    game.appendChild(wordsDiv);
+    game.appendChild(targetsDiv);
+}
+
+function check() {
+    let ok = true;
+
+    document.querySelectorAll(".target").forEach(t => {
+        const word = t.querySelector(".slot .word");
+        if (!word || word.id !== t.dataset.answer) {
+            ok = false;
+        }
+    });
+
+    if (ok) {
+        soundCorrect.play();
+        setTimeout(() => {
+            if (level < levels.length - 1) {
+                alert("🌟 Skvělé! Postupuješ na další stanoviště!");
+                level++;
+                loadLevel();
+            } else {
+                alert("🏆 Gratulujeme! Poklad je u starého dubu 🌳");
+            }
+        }, 400);
+    } else {
+        soundWrong.play();
+        alert("❌ Něco nesedí, zkus to znovu.");
+    }
+}
+
+loadLevel();
+</script>
+
+</body>
+</html>
