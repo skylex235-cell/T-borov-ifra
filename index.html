@@ -9,7 +9,12 @@
 <style>
 body {
     font-family: "Luckiest Guy", cursive;
-    background-image: url('final photo.png');
+    background-image: url("final photo.png");
+    background-size: contain;      /* ← celá fotka */
+    background-repeat: no-repeat;  /* ← neopakuje se */
+    background-position: center;   /* ← vycentrovaná */
+    background-color: #ffffff;     /* ← okraje když je jiný poměr */
+    min-height: 100vh;
     text-align: center;
 }
 
@@ -18,7 +23,11 @@ h1 {
 }
 
 #game {
-    margin-top: 20px;
+    background: rgba(255,255,255,0.85);
+    padding: 20px;
+    border-radius: 20px;
+    max-width: 900px;
+    margin: auto;
 }
 
 .words, .targets {
