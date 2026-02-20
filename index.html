@@ -107,6 +107,8 @@ button:hover {
 <script>
 let level = 0;
 let selectedWord = null;
+let dragged = null;
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 const soundCorrect = new Audio("zvuk-dobre.mpeg");
 const soundWrong   = new Audio("zvuk-spatne.mpeg");
@@ -226,7 +228,7 @@ const levels = [
     text: `
         <div style="font-size: 20px; font-weight: bold; color: black;">
             Gratuluju k výhře! 🎉<br><br>
-            Tvojí odměnou je místo a čas srazu:<br>
+            Zde je tvou odměnou místo a čas srazu:<br>
             <strong>Hospoda Vajtfish, 17:00, 27.2 :D</strong>
         </div>
     `
@@ -239,20 +241,13 @@ function loadLevel() {
     const task = document.getElementById("task");
     const checkBtn = document.getElementById("checkBtn");
 
-    if (levels[level].type === "game") {
-        title.style.color = "black";
-    } else {
-        title.style.color = "#2d3436";
-    }
-
     game.innerHTML = "";
     title.innerText = levels[level].title;
     task.innerText = "";
 
-    if (levels[level].type === "intro") {
+    if(levels[level].type === "intro"){
         checkBtn.style.display = "none";
-
-        let isLast = level === levels.length - 1;
+        let isLast = level === levels.length-1;
         game.innerHTML = `
             <div style="
                 background: rgba(255,255,255,0.7);
@@ -265,16 +260,10 @@ function loadLevel() {
                 <button id="continueBtn">${isLast ? "Dokončit hru ✅" : "Pokračovat ▶️"}</button>
             </div>
         `;
-
-        const btn = document.getElementById("continueBtn");
-        btn.onclick = () => {
-            if(isLast){
-                alert("Ukončení hry 🎊");
-            } else {
-                nextLevel();
-            }
-        }
-
+        document.getElementById("continueBtn").onclick = () => {
+            if(isLast){ alert("Ukončení hry 🎊"); }
+            else nextLevel();
+        };
         return;
     }
 
@@ -286,27 +275,26 @@ function loadLevel() {
     const targetsDiv = document.createElement("div");
     targetsDiv.className = "targets";
 
-    levels[level].words.forEach(w => {
+    levels[level].words.forEach(w=>{
         const el = document.createElement("div");
         el.className = "word";
         el.id = w.id;
         el.innerText = w.text;
 
-        el.onclick = () => {
-            if(selectedWord === el){
-                el.style.outline = "";
-                selectedWord = null;
-            } else {
-                if(selectedWord) selectedWord.style.outline = "";
-                selectedWord = el;
-                el.style.outline = "3px solid #f0932b";
-            }
-        };
+        if(isTouchDevice){
+            el.onclick = ()=>{
+                if(selectedWord===el){ el.style.outline=""; selectedWord=null; }
+                else{ if(selectedWord) selectedWord.style.outline=""; selectedWord=el; el.style.outline="3px solid #f0932b"; }
+            };
+        } else {
+            el.draggable = true;
+            el.ondragstart = ()=>{ dragged = el; };
+        }
 
         wordsDiv.appendChild(el);
     });
 
-    levels[level].targets.forEach(t => {
+    levels[level].targets.forEach(t=>{
         const el = document.createElement("div");
         el.className = "target";
         el.dataset.answer = t.answer;
@@ -318,15 +306,26 @@ function loadLevel() {
         const slot = document.createElement("div");
         slot.className = "slot";
 
-        slot.onclick = () => {
-            if(selectedWord){
-                const existing = slot.querySelector(".word");
-                if(existing) wordsDiv.appendChild(existing);
-                slot.appendChild(selectedWord);
-                selectedWord.style.outline = "";
-                selectedWord = null;
-            }
-        };
+        if(isTouchDevice){
+            slot.onclick = ()=>{
+                if(selectedWord){
+                    const existing = slot.querySelector(".word");
+                    if(existing) wordsDiv.appendChild(existing);
+                    slot.appendChild(selectedWord);
+                    selectedWord.style.outline="";
+                    selectedWord=null;
+                }
+            };
+        } else {
+            slot.ondragover = e=>e.preventDefault();
+            slot.ondrop = ()=>{
+                if(dragged){
+                    const existing = slot.querySelector(".word");
+                    if(existing) wordsDiv.appendChild(existing);
+                    slot.appendChild(dragged);
+                }
+            };
+        }
 
         el.appendChild(label);
         el.appendChild(slot);
@@ -337,41 +336,30 @@ function loadLevel() {
     game.appendChild(targetsDiv);
 }
 
-function nextLevel() {
-    level++;
-    loadLevel();
-}
+function nextLevel(){ level++; loadLevel(); }
 
-function check() {
+function check(){
     let ok = true;
-    document.querySelectorAll(".target").forEach(t => {
+    document.querySelectorAll(".target").forEach(t=>{
         const slot = t.querySelector(".slot");
         const word = slot.querySelector(".word");
-
-        if(!word || word.id !== t.dataset.answer){
+        if(!word || word.id!==t.dataset.answer){
             ok = false;
-            slot.style.borderColor = "red";
-            slot.style.borderWidth = "4px";
+            slot.style.borderColor="red";
+            slot.style.borderWidth="4px";
         } else {
-            slot.style.borderColor = "#555";
-            slot.style.borderWidth = "2px";
+            slot.style.borderColor="#555";
+            slot.style.borderWidth="2px";
         }
     });
 
     if(ok){
         soundCorrect.play();
-        setTimeout(() => {
-            if(level < levels.length - 1){
-                alert("🌟 Skvělé! Postupuješ dál!");
-                nextLevel();
-            } else {
-                alert("🏆 Gratulujeme!");
-            }
-        }, 300);
-    } else {
-        soundWrong.play();
-        alert("❌ Něco nesedí, zkus to znovu.");
-    }
+        setTimeout(()=>{
+            if(level<levels.length-1){ alert("🌟 Skvělé! Postupuješ dál!"); nextLevel(); }
+            else { alert("🏆 Gratulujeme! Poklad je u starého dubu 🌳"); }
+        },300);
+    } else { soundWrong.play(); alert("❌ Něco nesedí, zkus to znovu."); }
 }
 
 loadLevel();
