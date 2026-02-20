@@ -17,11 +17,15 @@ body {
     background-color: #ffffff;
     min-height: 100vh;
     text-align: center;
-    transition: background-image 0.5s ease-in-out;
 }
 
 h1 {
     color: #2d3436;
+    text-shadow:
+        -2px -2px 0 #ffffff,
+         2px -2px 0 #ffffff,
+        -2px  2px 0 #ffffff,
+         2px  2px 0 #ffffff;
 }
 
 #game {
@@ -85,6 +89,7 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: border 0.2s;
 }
 </style>
 </head>
@@ -109,70 +114,135 @@ const levels = [
 {
     type: "intro",
     title: "🏕️ Vítej na táborové hře!",
-    background: "padání.jpg",
     text: `
-        Vítej V prokopově dračím doupěti! 🐉<br><br>
-        Pokud chceš uniknout z doupěte a zároveň najít místo setkaní s ostatními přeživšími.<br>
-        Musíš správně splnit úkoly a hádanky které tě čekají po cestě na svobodu.<br><br>
-        Připrav se, prokopovo dračí doupě doposud nikdo neopustil živý! 🔥
+        Vítej! 🌲<br><br>
+        Čeká tě cesta po táborových stanovištích.<br>
+        Na každém musíš správně splnit úkol aby jsi dostal místo a čas srazu ;).<br><br>
+        Připrav se, soustřeď se a vyraz! 🔥
     `
 },
 {
     type: "game",
-    title: "🏕️ Stanoviště 1 – Co patří do batohu?",
-    background: "Drak.webp",
+    title: "🏕️ Stanoviště ez jak nic – Kuchyně a areál?",
     words: [
-        {id:"spacak", text:"Spacák"},
-        {id:"kartacek", text:"Kartáček"},
-        {id:"laptop", text:"Notebook"}
+        {id:"los", text:"Guláš"},
+        {id:"ls", text:"Rajská"},
+        {id:"os", text:"Olda"},
+        {id:"ls", text:"Milan"},
+        {id:"ssdasd", text:"Tomáš"},
+        {id:"lbos", text:"Řízek"},
+        {id:"lu", text:"Buchtičky se šodou"},
+        {id:"19", text:"19"},
+        {id:"22", text:"22"},
+        {id:"21", text:"21"},
+        {id:"file", text:"Filé"},
+        {id:"20", text:"20"},
+        {id:"lubos", text:"Luboš"},
+        {id:"15", text:"15"},
+        {id:"16", text:"16"},
     ],
     targets: [
-        {text:"Na spaní", answer:"spacak"},
-        {text:"Hygiena", answer:"kartacek"},
-        {text:"Do tábora nepatří", answer:"laptop"}
+        {text:"Jaké jídlo se vždy dává do jídelníčku na celodeňák (ale ve skutečnosti není)?", answer:"file"},
+        {text:"Jak se jmenuje správce areálu?", answer:"lubos"},
+        {text:"Kolik je chatek na táboře?", answer:"20"}
     ]
 },
 {
     type: "game",
-    title: "🔥 Stanoviště 2 – U ohně",
-    background: "Chodba.webp",
+    title: "🔥 Stanoviště Už jsem se trochu zapotil – Lidi, zvířátka a stavba",
     words: [
-        {id:"kytara", text:"Kytara"},
-        {id:"sirky", text:"Sirky"},
-        {id:"plysak", text:"Plyšák"}
+        {id:"s", text:"Loď"},
+        {id:"sd", text:"Petr"},
+        {id:"m", text:"málo"},
+        {id:"24", text:"24"},
+        {id:"sfgg", text:"Sauna"},
+        {id:"vasik", text:"Vašík"},
+        {id:"sdf", text:"trochu"},
+        {id:"25", text:"25"},
+        {id:"hrad", text:"hrad"},
+        {id:"hrtjkk", text:"Olda"},
+        {id:"hodne", text:"Hodně"},
+        {id:"20", text:"20"},
+        {id:"sfghh", text:"Stan"},
+        {id:"jtjkt", text:"Prokop"},
+        {id:"fgvb", text:"přiměřeně"},
+        {id:"26", text:"26"},
+        {id:"jlhz", text:"Ježek"},
+        {id:"hdfgh", text:"David"},
+        {id:"ojnizuztf", text:"Decentně"},
+        {id:"22", text:"22"},
+        {id:"mhjm", text:"Ptáček"},
+        {id:"asgfh", text:"Lucka"},
+        {id:"hbgjn", text:"Zajíček"},
+        {id:"23", text:"23"},
+        {id:"zmije", text:"Zmije"}
     ],
     targets: [
-        {text:"Hudba u ohně", answer:"kytara"},
-        {text:"Rozdělávání ohně", answer:"sirky"},
-        {text:"Na spaní do stanu", answer:"plysak"}
+        {text:"Co bylo dřív za stavbu místo podia? ", answer:"hrad"},
+        {text:"Jak se jmenoval červenovlasý zástupce na jedničce", answer:"vasik"},
+        {text:"Jaké ohrožené zvíře jsme chytali před zeleným a žlutým domečkem?", answer:"zmije"},
+        {text:"Jak moc se těšíš na tábor?", answer:"hodne"},
+        {text:"Kolik letos budeme mít dohromady vedoucích, prágošů, cthářů a zdravotníku?", answer:"25"}
     ]
 },
 {
     type: "game",
-    title: "🗺️ Stanoviště 3 – Orientace v lese",
-    background: "Dveře.webp",
+    title: "🗺️ Stanoviště No můj ty Tondo! – Nekategorizovatelná skupina :D",
     words: [
-        {id:"mapa", text:"Mapa"},
-        {id:"kompas", text:"Kompas"},
-        {id:"ovladac", text:"Ovladač od TV"}
+        {id:"Lukoko", text:"Lukoko"},
+        {id:"DFsdfg", text:"10 minut"},
+        {id:"DFsgdfg", text:"Hází profesionálně šipky"},
+        {id:"dfgsdggdsg", text:"David"},
+        {id:"42", text:"42 dní"},
+        {id:"DFsdfg", text:"nic nedělá, válí si šunky"},
+        {id:"jtjtgjtj", text:"455862 sekund"},
+        {id:"dfghaa", text:"2 roky"},
+        {id:"dfs", text:"Narnie"},
+        {id:"Buhurt", text:"Buhurt"},
+        {id:"sdg", text:"Harry Potter"},
+        {id:"sdasdasdxx", text:"Karel"},
+        {id:"shghs", text:"Indiana Jones"},
+        {id:"gdsfg", text:"jedno milénium"},
+        {id:"DFsdfg", text:"Lukostřelbu"},
+        {id:"fhdh", text:"Karlík a továrna na čokoládu"},
+        {id:"asfgg", text:"už dost prokope"},
+        {id:"dhdhf", text:"Cesta kolem světa"},
+        {id:"dfgsdggdsg", text:"Míša"},
+        {id:"dfhdffh", text:"LOTR"},
+        {id:"DFsdfg", text:"šerm"},
+        {id:"addamsfamily", text:"addams family"}
     ],
     targets: [
-        {text:"Ukazuje cestu", answer:"mapa"},
-        {text:"Ukazuje sever", answer:"kompas"},
-        {text:"Do lesa nepatří", answer:"ovladac"}
+        {text:"Co dělá prokop za divnej sport?", answer:"Buhurt"},
+        {text:"Kdo udělal dřevěnou mapu sobeňáku pomocí laseru v doupěti", answer:"Lukoko"},
+        {text:"Cca za jak dlouho se dostane průměrná suchozemská želva ze Soběňáku do Prahy?", answer:"42"},
+        {text:"Co bylo za téma CTH na uplně první jedničce (nultý ročník se nepočítá)", answer:"addamsfamily"}
     ]
+},
+{
+    type: "intro",
+    title: "🏆 Gratulujeme!",
+    text: `
+        <div style="font-size: 20px; font-weight: bold; color: black;">
+            Gratuluju k výhře! 🎉<br><br>
+            Tvojí odměnou je místo a čas srazu:<br>
+            <strong>Hospoda Vajtfish, 17:00, 27.2 :D</strong>
+        </div>
+    `
 }
 ];
 
 function loadLevel() {
     const game = document.getElementById("game");
-    document.body.style.backgroundImage = `url('${levels[level].background}')`;
-    document.body.style.backgroundSize = "contain";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.backgroundPosition = "center";
     const title = document.getElementById("title");
     const task = document.getElementById("task");
     const checkBtn = document.getElementById("checkBtn");
+
+    if (levels[level].type === "game") {
+        title.style.color = "black";
+    } else {
+        title.style.color = "#2d3436";
+    }
 
     game.innerHTML = "";
     title.innerText = levels[level].title;
@@ -180,6 +250,8 @@ function loadLevel() {
 
     if (levels[level].type === "intro") {
         checkBtn.style.display = "none";
+
+        let isLast = level === levels.length - 1;
         game.innerHTML = `
             <div style="
                 background: rgba(255,255,255,0.7);
@@ -189,9 +261,19 @@ function loadLevel() {
             ">
                 ${levels[level].text}
                 <br><br>
-                <button onclick="nextLevel()">Pokračovat ▶️</button>
+                <button id="continueBtn">${isLast ? "Dokončit hru ✅" : "Pokračovat ▶️"}</button>
             </div>
         `;
+
+        const btn = document.getElementById("continueBtn");
+        btn.onclick = () => {
+            if(isLast){
+                alert("Ukončení hry 🎊");
+            } else {
+                nextLevel();
+            }
+        }
+
         return;
     }
 
@@ -254,8 +336,17 @@ function nextLevel() {
 function check() {
     let ok = true;
     document.querySelectorAll(".target").forEach(t => {
-        const word = t.querySelector(".slot .word");
-        if (!word || word.id !== t.dataset.answer) ok = false;
+        const slot = t.querySelector(".slot");
+        const word = slot.querySelector(".word");
+
+        if (!word || word.id !== t.dataset.answer) {
+            ok = false;
+            slot.style.borderColor = "red";
+            slot.style.borderWidth = "4px";
+        } else {
+            slot.style.borderColor = "#555";
+            slot.style.borderWidth = "2px";
+        }
     });
 
     if (ok) {
@@ -279,3 +370,4 @@ loadLevel();
 
 </body>
 </html>
+
