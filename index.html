@@ -50,8 +50,9 @@ h1 {
     background: #6ab04c;
     color: white;
     border-radius: 10px;
-    cursor: grab;
+    cursor: pointer;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    user-select: none;
 }
 
 .target {
@@ -105,7 +106,7 @@ button:hover {
 
 <script>
 let level = 0;
-let dragged = null;
+let selectedWord = null;
 
 const soundCorrect = new Audio("zvuk-dobre.mpeg");
 const soundWrong   = new Audio("zvuk-spatne.mpeg");
@@ -281,10 +282,6 @@ function loadLevel() {
 
     const wordsDiv = document.createElement("div");
     wordsDiv.className = "words";
-    wordsDiv.ondragover = e => e.preventDefault();
-    wordsDiv.ondrop = () => {
-        if (dragged) wordsDiv.appendChild(dragged);
-    };
 
     const targetsDiv = document.createElement("div");
     targetsDiv.className = "targets";
@@ -294,8 +291,18 @@ function loadLevel() {
         el.className = "word";
         el.id = w.id;
         el.innerText = w.text;
-        el.draggable = true;
-        el.ondragstart = () => dragged = el;
+
+        el.onclick = () => {
+            if(selectedWord === el){
+                el.style.outline = "";
+                selectedWord = null;
+            } else {
+                if(selectedWord) selectedWord.style.outline = "";
+                selectedWord = el;
+                el.style.outline = "3px solid #f0932b";
+            }
+        };
+
         wordsDiv.appendChild(el);
     });
 
@@ -310,12 +317,14 @@ function loadLevel() {
 
         const slot = document.createElement("div");
         slot.className = "slot";
-        slot.ondragover = e => e.preventDefault();
-        slot.ondrop = () => {
-            if (dragged) {
+
+        slot.onclick = () => {
+            if(selectedWord){
                 const existing = slot.querySelector(".word");
-                if (existing) wordsDiv.appendChild(existing);
-                slot.appendChild(dragged);
+                if(existing) wordsDiv.appendChild(existing);
+                slot.appendChild(selectedWord);
+                selectedWord.style.outline = "";
+                selectedWord = null;
             }
         };
 
@@ -339,7 +348,7 @@ function check() {
         const slot = t.querySelector(".slot");
         const word = slot.querySelector(".word");
 
-        if (!word || word.id !== t.dataset.answer) {
+        if(!word || word.id !== t.dataset.answer){
             ok = false;
             slot.style.borderColor = "red";
             slot.style.borderWidth = "4px";
@@ -349,14 +358,14 @@ function check() {
         }
     });
 
-    if (ok) {
+    if(ok){
         soundCorrect.play();
         setTimeout(() => {
-            if (level < levels.length - 1) {
+            if(level < levels.length - 1){
                 alert("🌟 Skvělé! Postupuješ dál!");
                 nextLevel();
             } else {
-                alert("🏆 Gratulujeme! Poklad je u starého dubu 🌳");
+                alert("🏆 Gratulujeme!");
             }
         }, 300);
     } else {
@@ -370,4 +379,3 @@ loadLevel();
 
 </body>
 </html>
-
